@@ -196,7 +196,7 @@ h2, h3 {
 /* Skills */
 .skill-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	grid-template-columns: 1fr;
 	gap: 1.5rem;
 }
 
