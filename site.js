@@ -46,4 +46,4 @@ function typeLoop() {
 	setTimeout(typeLoop, deleting ? 40 : 80);
 }
 
-typeLoop();
+if (typedEl) typeLoop();

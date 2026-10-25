@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Case study: a wake-word voice assistant for Windows that runs on a free local AI model, built in Python.">
+	<title>J.A.R.V.I.S. Voice Assistant | Michael Brackin</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="site.css" rel="stylesheet">
+</head>
+<body>
+
+	<header class="nav">
+		<div class="nav-inner">
+			<a href="index.html#top" class="logo">~/Michael Brackin</a>
+			<button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+				<span></span><span></span><span></span>
+			</button>
+			<nav class="nav-links" id="navLinks">
+				<a href="index.html#about">ABOUT</a>
+				<a href="index.html#skills">SKILLS</a>
+				<a href="index.html#projects">PROJECTS</a>
+				<a href="index.html#experience">EXPERIENCE</a>
+				<a href="index.html#education">EDUCATION</a>
+				<a href="index.html#contact">CONTACT</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<a class="back-link" href="index.html#projects">&larr; Back to projects</a>
+
+		<p class="eyebrow">PROJECT_01 // Voice Assistant</p>
+		<h1 class="page-title">J.A.R.V.I.S. Voice Assistant</h1>
+		<p class="tagline">A wake-word desktop assistant for Windows, styled after Iron Man's JARVIS, that runs on a free local AI model.</p>
+
+		<div class="tag-list small page-tags">
+			<span>Python</span><span>Ollama / Qwen3</span><span>faster-whisper</span><span>openWakeWord</span><span>Piper TTS</span><span>pywebview</span><span>Cloudflare Workers + D1</span>
+		</div>
+
+		<p class="case-label">CASE_STUDY.TXT</p>
+
+		<figure class="shot">
+			<img src="img/jarvis-hud.jpg" alt="The JARVIS heads-up display: an arc-reactor animation in the center, today's schedule on the left, and a transcript of a spoken reminder request below." width="800" height="509">
+			<figcaption>The HUD while listening, shown with sample data. The schedule panel, transcript and reactor are all live in the app.</figcaption>
+		</figure>
+
+		<h2><span class="tag">#</span> overview</h2>
+		<p>
+			J.A.R.V.I.S. is a voice-activated personal assistant for Windows that I'm building for a friend.
+			It only listens after a wake word, then opens files and apps, arranges windows, manages a
+			calendar and reminders, searches the web, controls Spotify, and can critique a screenshot
+			(handy for reviewing YouTube thumbnails). Everything runs on the user's own PC by default,
+			with no account, API key or subscription required.
+		</p>
+		<p>
+			It has grown from a first prototype into a packaged app with a one-click installer,
+			in-app updates, four complete visual themes, and a Discord bot that can message the assistant
+			when the PC is off. Friends who use it send me bug and feature lists, which drive each release.
+		</p>
+
+		<div class="stats">
+			<div class="stat"><span class="num">25+</span><span class="label">voice-callable tools</span></div>
+			<div class="stat"><span class="num">4</span><span class="label">full themes, each with its own voice and wake phrase</span></div>
+			<div class="stat"><span class="num">0</span><span class="label">audio uploaded; speech and wake word are local</span></div>
+			<div class="stat"><span class="num">11</span><span class="label">tagged releases (v1.0.0 to v1.2.1)</span></div>
+		</div>
+
+		<h2><span class="tag">#</span> the problem</h2>
+		<p>
+			Commercial assistants are cloud-first, locked to their own ecosystems, and can't do the things
+			I actually wanted: find a file in my Downloads folder, snap a window to half the screen,
+			or add "class every Monday, Wednesday and Friday until December 11" to a calendar. Cloud AI
+			APIs also cost money per request, which is a poor fit for something a group of friends should
+			be able to install for free.
+		</p>
+		<p>
+			So the goal was an assistant that is private by default, free to run, and genuinely useful
+			on a Windows desktop, while still feeling good to use. The hard part turned out not to be
+			any single model, but making a small local model reliable enough to trust with your calendar.
+		</p>
+
+		<h2><span class="tag">#</span> how it works</h2>
+		<p>
+			Every request flows through the same pipeline. Each stage is a separate module, so any piece
+			(wake word, speech recognition, brain, voice) can be swapped without touching the others.
+		</p>
+<pre class="code"><code>mic  ->  openWakeWord        "Hey JARVIS" detected locally
+     ->  faster-whisper      speech to text, on the PC
+     ->  brain               local Qwen3 8B (Ollama) or optional Claude
+            |  decides which tool to call
+            v
+         tools.py            25+ functions: files, apps, windows,
+            |                calendar, reminders, notes, Spotify...
+            v
+     ->  Piper TTS           spoken reply, generated locally
+     ->  HUD (pywebview)     animated reactor, transcript, schedule</code></pre>
+		<ul class="bullets">
+			<li><strong>Tool calling.</strong> The model never touches the PC directly. It chooses from a fixed list of typed tools (for example <code>set_reminder</code> or <code>window_control</code>) and the Python code executes them, which keeps behavior predictable and safe.</li>
+			<li><strong>Two brains, one interface.</strong> A local Ollama model is the default; pasting an Anthropic API key switches to Claude for harder questions. Both share the same tools and system prompt.</li>
+			<li><strong>Resource limits.</strong> Settings expose GPU mode (full, balanced, CPU only), unload-after-idle, and a reply-length cap. A game mode stops listening and frees the graphics card while a game is running.</li>
+			<li><strong>HUD.</strong> A pywebview window renders an HTML/SVG arc reactor whose animation follows the audio level while JARVIS speaks.</li>
+		</ul>
+
+		<p>A trimmed look at one of the typed tool definitions the model can call:</p>
+<pre class="code"><code>{
+  "name": "set_reminder",
+  "description": "Set a spoken reminder. JARVIS will say it aloud at the due time.",
+  "input_schema": {
+    "properties": {
+      "text":   { "type": "string" },
+      "due":    { "type": "string", "description": "YYYY-MM-DDTHH:MM local time." },
+      "repeat": { "type": "string", "enum": [ ... ] },
+      "days":   { "type": "array",  "description": "e.g. [\"tuesday\", \"thursday\"]" }
+    },
+    "required": ["text", "due"]
+  }
+}</code></pre>
+
+		<h2><span class="tag">#</span> examples</h2>
+		<p>These are the kinds of requests it handles. Responses below are illustrative.</p>
+
+		<div class="transcript">
+			<p class="t-you">Hey JARVIS, remind me every weekday at 8 to take my meds.</p>
+			<p class="t-ai">Done. I'll remind you every weekday at 8:00 AM.</p>
+			<p class="t-you">Class every Monday, Wednesday and Friday 10:30 to 11:20 until December 11.</p>
+			<p class="t-ai">Added to your calendar, repeating Monday, Wednesday and Friday until December 11.</p>
+			<p class="t-you">Make Discord bigger and put Opera on the left half.</p>
+			<p class="t-ai">Done.</p>
+			<p class="t-you">Evaluate this thumbnail design and tell me improvements.</p>
+			<p class="t-ai">(captures the screen, runs a local vision model, and critiques contrast, text size and focal point)</p>
+		</div>
+
+		<p>
+			Each theme is a complete reskin, not just a color change: it swaps the assistant's name, wake
+			phrase, personality, voice, fonts and the reactor design. Here is the Cyberpunk theme
+			("Hey Choom") with its hexagonal reactor:
+		</p>
+
+		<figure class="shot">
+			<img src="img/jarvis-cyberpunk.jpg" alt="The Cyberpunk theme: a yellow hexagonal reactor with a transcript where the assistant, called Choom, answers in Night City slang." width="800" height="509" loading="lazy">
+			<figcaption>Cyberpunk theme, shown with sample data. Same app, different name, voice, personality and reactor.</figcaption>
+		</figure>
+
+		<h2><span class="tag">#</span> engineering challenges</h2>
+		<ul class="bullets">
+			<li>
+				<strong>A small model that can't count weekdays.</strong>
+				The local 8B model kept miscalculating "next Thursday". Rather than hoping for a bigger model,
+				I compute a date cheat-sheet in code and inject it into every message, so the model only has to
+				copy the right date instead of doing calendar math.
+<pre class="code"><code>Dates: today (Sunday)=2026-10-25, tomorrow (Monday)=2026-10-26,
+Tuesday=2026-10-27, ... next Sunday=2026-11-01.
+Times: 12pm=12:00, 1pm=13:00, ... ; in '4 to 9 pm' both are pm.</code></pre>
+			</li>
+			<li>
+				<strong>Wake phrases with no model.</strong>
+				openWakeWord ships a model for "Hey JARVIS" but not for custom phrases like "Hey Choom".
+				For those I built speech spotting on top of Whisper: it transcribes short windows, fuzzy-matches
+				likely mishearings, and retries because Whisper tends to drop a fast leading "Hey".
+				On synthesized test speech it caught 32 of 35 wake attempts with no false wakes.
+			</li>
+			<li>
+				<strong>Fitting vision into 8 GB of VRAM.</strong>
+				The default 8B vision model is a "thinking" model that spilled onto the CPU and timed out after
+				five minutes. Switching to the 4B instruct variant keeps it fully on the GPU and answers in about 15 seconds.
+			</li>
+			<li>
+				<strong>File search that feels instant.</strong>
+				Walking the home folder took over 8 seconds per query, so file lookups go through the
+				Windows Search index via <code>pywin32</code> instead.
+			</li>
+			<li>
+				<strong>Cloud voice that stopped working.</strong>
+				My first text-to-speech choice, Microsoft's online Edge voices, returned 403 errors,
+				so I replaced it with Piper, which runs fully locally and fits the privacy goal.
+			</li>
+			<li>
+				<strong>A sandbox that hid the data.</strong>
+				Apps launched from inside the Claude desktop app are MSIX-sandboxed, so their AppData writes
+				landed in a private package folder that my own launches never saw. User data now lives in
+				a plain <code>~/JarvisData</code> folder.
+			</li>
+		</ul>
+
+		<h2><span class="tag">#</span> reaching the phone</h2>
+		<p>
+			A desktop assistant is useless for reminders when the PC is off, so I added a Discord bot on
+			Cloudflare Workers with a D1 database. One shared bot serves many users: each install pairs with
+			a one-time code, then <code>/today</code>, <code>/remind</code>, <code>/event</code> and <code>/cancel</code>
+			work from a phone, and reminders arrive as DMs. Tenant keys are stored only as SHA-256 hashes, pairing
+			is rate-limited per IP, and the whole thing runs on Cloudflare's free plan.
+		</p>
+
+		<h2><span class="tag">#</span> shipping it</h2>
+		<p>
+			To make it installable by non-programmers, a single installer script sets up Python, Ollama, the
+			app and the AI models (about 12 GB, mostly the models), lets the user pick which drive to use,
+			and creates Desktop and Start Menu shortcuts. Updates are delivered from private GitHub releases
+			through a read-only fine-grained token, and a small script bumps the version and publishes each release.
+		</p>
+
+		<h2><span class="tag">#</span> results</h2>
+		<p>
+			JARVIS runs end to end on an RTX 3070 Ti with 8 GB of VRAM: wake word, transcription, reasoning,
+			tool use and speech all happen locally, and the first release shipped within a week of starting.
+			It is now at v1.2.1 after 11 releases, with roughly 9,000 lines of Python, JavaScript, HTML and CSS.
+			The multi-tenant Discord service and installer mean friends can set it up themselves.
+		</p>
+		<p>
+			JARVIS is still in active development. Once it's finished, I plan to publish the source
+			on GitHub and link it here. In the meantime, <a href="index.html#contact">get in touch</a>
+			if you'd like to hear more.
+		</p>
+
+		<h2><span class="tag">#</span> what I'd do differently</h2>
+		<ul class="bullets">
+			<li>Add automated tests around date and time parsing, since that is where a small local model is weakest.</li>
+			<li>Move more of the scheduling logic from prompt-level hints into deterministic code, so the model only picks the tool.</li>
+			<li>Record a short demo video and publish a sanitized public version of the repository.</li>
+		</ul>
+
+		<nav class="page-nav" aria-label="Project navigation">
+			<a href="index.html#projects">&larr; All projects</a>
+			<a href="index.html#contact">Contact &rarr;</a>
+		</nav>
+
+		<p class="end">END TRANSMISSION</p>
+	</main>
+
+	<footer class="footer">
+		<p>&copy; <span id="year"></span> Michael Brackin. Built from scratch.</p>
+	</footer>
+
+	<script src="site.js"></script>
+</body>
+</html>
