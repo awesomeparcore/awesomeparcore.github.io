@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Case study: comparing a DQN and a PPO agent on the slippery FrozenLake reinforcement learning environment.">
+	<title>Reinforcement Learning on FrozenLake | Michael Brackin</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="site.css" rel="stylesheet">
+</head>
+<body>
+
+	<header class="nav">
+		<div class="nav-inner">
+			<a href="index.html#top" class="logo">~/Michael Brackin</a>
+			<button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+				<span></span><span></span><span></span>
+			</button>
+			<nav class="nav-links" id="navLinks">
+				<a href="index.html#about">ABOUT</a>
+				<a href="index.html#skills">SKILLS</a>
+				<a href="index.html#projects">PROJECTS</a>
+				<a href="index.html#experience">EXPERIENCE</a>
+				<a href="index.html#education">EDUCATION</a>
+				<a href="index.html#contact">CONTACT</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<a class="back-link" href="index.html#projects">&larr; Back to projects</a>
+
+		<p class="eyebrow">PROJECT_03 // Reinforcement Learning</p>
+		<h1 class="page-title">Reinforcement Learning on FrozenLake: DQN vs PPO</h1>
+		<p class="tagline">I trained two kinds of AI agents to cross a slippery frozen lake, then compared how they learned.</p>
+
+		<div class="tag-list small page-tags">
+			<span>Python</span><span>PyTorch</span><span>Stable-Baselines3</span><span>Gymnasium</span><span>NumPy</span><span>Matplotlib</span>
+		</div>
+
+		<p class="case-label">CASE_STUDY.TXT</p>
+
+		<figure class="shot narrow">
+			<img src="img/frozenlake-board.png" alt="The FrozenLake 4x4 grid: an elf in the top-left corner, four holes in the ice, and a gift box in the bottom-right corner." width="1280" height="1284">
+			<figcaption>FrozenLake-v1 from Gymnasium. The agent (the elf) must reach the gift without falling through a hole.</figcaption>
+		</figure>
+
+		<h2><span class="tag">#</span> overview</h2>
+		<p>
+			This was my final project for my AI course (CPSC 425). The goal was to implement two different
+			reinforcement learning algorithms on the same problem and compare them: a Deep Q-Network (DQN),
+			which I wrote myself in PyTorch, and Proximal Policy Optimization (PPO), using Stable-Baselines3.
+			I measured each by how often it reached the goal, how stable its learning was, and how long it took to train.
+		</p>
+
+		<div class="stats">
+			<div class="stat"><span class="num">74.2%</span><span class="label">success rate in testing, the best possible for this environment</span></div>
+			<div class="stat"><span class="num">2 vs 22</span><span class="label">minutes to train PPO vs my DQN</span></div>
+			<div class="stat"><span class="num">~5,000</span><span class="label">training episodes per agent</span></div>
+			<div class="stat"><span class="num">2</span><span class="label">algorithms: value-based and policy-based</span></div>
+		</div>
+
+		<h2><span class="tag">#</span> the problem</h2>
+		<p>
+			FrozenLake is a 4x4 grid. The agent starts in one corner and has to reach a goal in the opposite
+			corner without stepping into a hole. It sounds simple, but two things make it hard to learn:
+		</p>
+		<ul class="bullets">
+			<li><strong>The ice is slippery.</strong> When the agent picks a direction, it only moves that way a third of the time; the rest of the time it slides sideways. The same action can lead to different outcomes.</li>
+			<li><strong>The reward is sparse.</strong> The agent gets +1 only on reaching the goal, so early on it receives almost no feedback about whether it is doing well.</li>
+		</ul>
+
+		<h2><span class="tag">#</span> approach</h2>
+		<p>
+			To give the agents a bit more signal, I used reward shaping: a small penalty on every step to discourage
+			wandering, and a negative reward for falling into a hole, alongside the +1 for the goal.
+		</p>
+		<ul class="bullets">
+			<li><strong>DQN (built from scratch).</strong> The state is one-hot encoded and fed into a small network (one hidden layer of 32 units) that outputs a Q-value for each of the four moves. It uses experience replay (a 4,000-step memory), epsilon-greedy exploration that decays over training, a discount factor of 0.99, and mini-batch updates with Adam.</li>
+			<li><strong>PPO (Stable-Baselines3).</strong> A standard MLP policy trained for 100,000 timesteps, with a Monitor wrapper to log rewards for plotting.</li>
+		</ul>
+
+<pre class="code"><code>class DQN(nn.Module):
+    def __init__(self):
+        super(DQN, self).__init__()
+        self.fc1 = nn.Linear(state_size, 32)
+        self.fc2 = nn.Linear(32, action_size)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        return self.fc2(x)
+
+ppo_env = Monitor(gym.make("FrozenLake-v1", is_slippery=True))
+ppo_model = PPO("MlpPolicy", ppo_env, verbose=0)
+ppo_model.learn(total_timesteps=100000, callback=callback)</code></pre>
+
+		<h2><span class="tag">#</span> results</h2>
+		<p>
+			Both agents learned to solve the lake, but they got there differently. The DQN improved quickly,
+			within the first thousand episodes or so, then stayed noisy for the rest of training. PPO sat near zero for
+			roughly its first 2,000 episodes, then climbed steadily and smoothly.
+		</p>
+
+		<div class="shot-grid">
+			<figure class="shot">
+				<img src="img/frozenlake-dqn.png" alt="Line chart of DQN average reward over about 5,000 episodes: it rises quickly to around 0.3 to 0.4, then fluctuates noisily." width="1260" height="972" loading="lazy">
+				<figcaption>DQN: fast early progress, then noisy. Trained in about 22 minutes.</figcaption>
+			</figure>
+			<figure class="shot">
+				<img src="img/frozenlake-ppo.png" alt="Line chart of PPO average reward over about 5,000 episodes: it stays near zero for about 2,000 episodes, then climbs steadily to around 0.7." width="1168" height="934" loading="lazy">
+				<figcaption>PPO: slow start, then steady, smooth improvement. Trained in about 2 minutes.</figcaption>
+			</figure>
+		</div>
+
+		<p>
+			In testing, the trained agents succeeded 74.2% of the time. That turns out to be the ceiling: working out
+			the best possible policy with dynamic programming over the environment's slippery transition
+			probabilities gives a maximum success rate of 74.22% within Gymnasium's 100-step limit, so no agent can do better on this map. Because both algorithms
+			reached it, the map is too easy to separate them on success rate alone.
+		</p>
+		<p>
+			The real difference was speed. PPO finished in about 2 minutes versus about 22 for my DQN, likely because my
+			DQN updates its network after every single step and builds its training targets in a Python loop, while
+			Stable-Baselines3 batches its updates.
+		</p>
+
+		<h2><span class="tag">#</span> challenges</h2>
+		<ul class="bullets">
+			<li><strong>Noisy learning signal.</strong> Because the ice is random, even a perfect policy fails about a quarter of the time, so reward curves never settle. I had to learn to read trends in noisy graphs instead of expecting a clean line.</li>
+			<li><strong>Exploration vs exploitation.</strong> Deciding how quickly the DQN should stop acting randomly and start trusting what it had learned.</li>
+			<li><strong>Reward tuning.</strong> Finding step and hole penalties that discouraged wandering without overwhelming the +1 reward for reaching the goal.</li>
+			<li><strong>Wrapping the environment for PPO.</strong> Getting the environment, the Monitor wrapper and a custom callback to cooperate so rewards could be logged and plotted.</li>
+		</ul>
+
+		<h2><span class="tag">#</span> what I'd do differently</h2>
+		<ul class="bullets">
+			<li>Move to the larger 8x8 map. Since both agents hit the same ceiling, the 4x4 lake is too simple to show which algorithm is really better.</li>
+			<li>Add a target network to the DQN, which should reduce its instability, and vectorize its updates to close the training-time gap.</li>
+			<li>Put both agents on the same reward scale. The DQN curve includes the shaping penalties, so I compared the agents by success rate rather than by their reward curves.</li>
+			<li>If I continued with one algorithm, I would pick PPO for its speed and smoother learning.</li>
+		</ul>
+
+		<nav class="page-nav" aria-label="Project navigation">
+			<a href="index.html#projects">&larr; All projects</a>
+			<a href="index.html#contact">Contact &rarr;</a>
+		</nav>
+
+		<p class="end">END TRANSMISSION</p>
+	</main>
+
+	<footer class="footer">
+		<p>&copy; <span id="year"></span> Michael Brackin. Built from scratch.</p>
+	</footer>
+
+	<script src="site.js"></script>
+</body>
+</html>
