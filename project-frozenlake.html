@@ -97,6 +97,13 @@ ppo_env = Monitor(gym.make("FrozenLake-v1", is_slippery=True))
 ppo_model = PPO("MlpPolicy", ppo_env, verbose=0)
 ppo_model.learn(total_timesteps=100000, callback=callback)</code></pre>
 
+		<p class="note-links">
+			Full code:
+			<a href="https://github.com/awesomeparcore/awesomeparcore.github.io/blob/main/frozenlake-dqn-vs-ppo.ipynb" target="_blank" rel="noopener">view the notebook on GitHub</a>,
+			<a href="https://colab.research.google.com/github/awesomeparcore/awesomeparcore.github.io/blob/main/frozenlake-dqn-vs-ppo.ipynb" target="_blank" rel="noopener">open it in Colab</a>,
+			or <a href="frozenlake-dqn-vs-ppo.ipynb" download>download the .ipynb</a>.
+		</p>
+
 		<h2><span class="tag">#</span> results</h2>
 		<p>
 			Both agents learned to solve the lake, but they got there differently. The DQN improved quickly,
