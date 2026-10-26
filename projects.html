@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="All of Michael Brackin's projects: software, AI, and design work.">
+	<title>All Projects | Michael Brackin</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="site.css" rel="stylesheet">
+</head>
+<body>
+
+	<header class="nav">
+		<div class="nav-inner">
+			<a href="index.html#top" class="logo">~/Michael Brackin</a>
+			<button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+				<span></span><span></span><span></span>
+			</button>
+			<nav class="nav-links" id="navLinks">
+				<a href="index.html#about">ABOUT</a>
+				<a href="index.html#skills">SKILLS</a>
+				<a href="index.html#projects">PROJECTS</a>
+				<a href="index.html#experience">EXPERIENCE</a>
+				<a href="index.html#education">EDUCATION</a>
+				<a href="index.html#contact">CONTACT</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="page wide">
+
+		<a class="back-link" href="index.html#projects">&larr; Back to home</a>
+
+		<p class="eyebrow">PORTFOLIO // All projects</p>
+		<h1 class="page-title">All projects</h1>
+		<p class="tagline">Software, AI, and design work. Open a project for the full write-up.</p>
+
+	<div class="project-grid">
+		<article class="card">
+			<a href="project-jarvis.html" class="card-image">
+				<img src="img/jarvis-hud.jpg" alt="The JARVIS heads-up display: an arc-reactor animation, today's schedule on the left, and a transcript of a spoken reminder request." width="800" height="509" loading="lazy">
+			</a>
+			<h3><a href="project-jarvis.html" class="card-title-link">J.A.R.V.I.S. Voice Assistant</a></h3>
+			<p>A wake-word voice assistant for Windows, styled after Iron Man's JARVIS, that I'm building for a friend. Runs on a free local AI model and handles files, apps, calendar, reminders, and web search, with a Discord bot for reminders while the PC is off.</p>
+			<div class="tag-list small">
+				<span>Python</span><span>Ollama</span><span>Whisper</span><span>Cloudflare Workers</span>
+			</div>
+			<div class="card-links">
+				<a href="project-jarvis.html">Read case study &rarr;</a>
+			</div>
+		</article>
+		<article class="card">
+			<a href="img/karambit-illustration.png" target="_blank" rel="noopener" class="card-image">
+				<img src="img/karambit-illustration.png" alt="Ten karambit knives arranged in a pinwheel, each blade a different color, all spiraling into a single center point on a pink background." width="1600" height="1236" loading="lazy">
+			</a>
+			<h3>Radial Karambit Illustration</h3>
+			<p>My self-directed illustration final: 10 karambit knives in a pinwheel, every blade spiraling into one center point, each with its own layered color scheme. Delivered as print-ready 11" x 8.5" vector artwork.</p>
+			<div class="tag-list small">
+				<span>Adobe Illustrator</span><span>Vector Art</span><span>Print Design</span>
+			</div>
+			<div class="card-links">
+				<a href="img/karambit-illustration.png" target="_blank" rel="noopener">View full size &rarr;</a>
+			</div>
+		</article>
+		<article class="card">
+			<a href="project-frozenlake.html" class="card-image">
+				<img src="img/frozenlake-board.png" alt="The FrozenLake 4x4 grid: an elf in the top-left corner, four holes in the ice, and a gift box in the bottom-right corner." width="1280" height="1284" loading="lazy">
+			</a>
+			<h3><a href="project-frozenlake.html" class="card-title-link">Reinforcement Learning on FrozenLake</a></h3>
+			<p>I trained and compared two AI agents, a DQN I built in PyTorch and Stable-Baselines3's PPO, on slippery FrozenLake. Both hit the 74.2% best-possible success rate, but PPO trained in 2 minutes versus 22.</p>
+			<div class="tag-list small">
+				<span>Python</span><span>PyTorch</span><span>Stable-Baselines3</span><span>Gymnasium</span>
+			</div>
+			<div class="card-links">
+				<a href="project-frozenlake.html">Read case study &rarr;</a>
+				<a href="https://github.com/awesomeparcore/awesomeparcore.github.io/blob/main/frozenlake-dqn-vs-ppo.ipynb" target="_blank" rel="noopener">Notebook</a>
+			</div>
+		</article>
+	</div>
+
+		<p class="end">END TRANSMISSION</p>
+	</main>
+
+	<footer class="footer">
+		<p>&copy; <span id="year"></span> Michael Brackin. Built from scratch.</p>
+	</footer>
+
+	<script src="site.js"></script>
+</body>
+</html>
