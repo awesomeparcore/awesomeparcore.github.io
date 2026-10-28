@@ -657,6 +657,10 @@ pre.code code {
 	margin-top: 1.25rem;
 }
 
+.hero-links.page-links {
+	margin: 0 0 1.25rem;
+}
+
 .btn-solid {
 	display: inline-block;
 	padding: 0.45rem 1rem;

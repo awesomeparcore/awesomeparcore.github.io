@@ -44,6 +44,11 @@
 		<h1 class="page-title">J.A.R.V.I.S. Voice Assistant</h1>
 		<p class="tagline">A wake-word desktop assistant for Windows, styled after Iron Man's JARVIS, that runs on a free local AI model.</p>
 
+		<div class="hero-links page-links">
+			<a class="btn-solid" href="https://github.com/awesomeparcore/jarvis" target="_blank" rel="noopener">View source on GitHub</a>
+			<a class="btn-outline" href="https://jarvis-remote.parcore2005.workers.dev" target="_blank" rel="noopener">Download</a>
+		</div>
+
 		<div class="tag-list small page-tags">
 			<span>Python</span><span>Ollama / Qwen3</span><span>faster-whisper</span><span>openWakeWord</span><span>Piper TTS</span><span>pywebview</span><span>Cloudflare Workers + D1</span>
 		</div>
@@ -206,28 +211,28 @@ Times: 12pm=12:00, 1pm=13:00, ... ; in '4 to 9 pm' both are pm.</code></pre>
 		<p>
 			To make it installable by non-programmers, a single installer script sets up Python, Ollama, the
 			app and the AI models (about 12 GB, mostly the models), lets the user pick which drive to use,
-			and creates Desktop and Start Menu shortcuts. Updates are delivered from private GitHub releases
-			through a read-only fine-grained token, and a small script bumps the version and publishes each release.
+			and creates Desktop and Start Menu shortcuts. Updates come from GitHub releases: the app checks every
+			few hours, says when a new version is out, shows a changelog, and installs it on request, and a small
+			script bumps the version and publishes each release.
 		</p>
 
 		<h2><span class="tag">#</span> results</h2>
 		<p>
 			JARVIS runs end to end on an RTX 3070 Ti with 8 GB of VRAM: wake word, transcription, reasoning,
 			tool use and speech all happen locally, and the first release shipped within a week of starting.
-			It is now at v1.2.1 after 11 releases, with roughly 9,000 lines of Python, JavaScript, HTML and CSS.
+			It is now at v1.2.5 after 12 releases, with roughly 9,000 lines of Python, JavaScript, HTML and CSS.
 			The multi-tenant Discord service and installer mean friends can set it up themselves.
 		</p>
 		<p>
-			JARVIS is still in active development. Once it's finished, I plan to publish the source
-			on GitHub and link it here. In the meantime, <a href="index.html#contact">get in touch</a>
-			if you'd like to hear more.
+			The source is open on <a href="https://github.com/awesomeparcore/jarvis" target="_blank" rel="noopener">GitHub</a>
+			under the MIT license, and JARVIS is still in active development.
 		</p>
 
 		<h2><span class="tag">#</span> what I'd do differently</h2>
 		<ul class="bullets">
 			<li>Add automated tests around date and time parsing, since that is where a small local model is weakest.</li>
 			<li>Move more of the scheduling logic from prompt-level hints into deterministic code, so the model only picks the tool.</li>
-			<li>Record a short demo video and publish a sanitized public version of the repository.</li>
+			<li>Record a short demo video.</li>
 		</ul>
 
 		<nav class="page-nav" aria-label="Project navigation">
