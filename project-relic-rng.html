@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Relic RNG, a browser idle game where you roll for relics with posted odds, dig through layers of the earth, and beat bosses.">
+	<title>Relic RNG | Michael Brackin</title>
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Relic RNG | Michael Brackin">
+	<meta property="og:description" content="A browser idle game: roll for relics with posted odds, dig down through the earth, and beat the boss at the bottom of each layer.">
+	<meta property="og:url" content="https://awesomeparcore.github.io/project-relic-rng.html">
+	<meta property="og:image" content="https://awesomeparcore.github.io/img/relic-rng.jpg">
+	<meta name="twitter:card" content="summary_large_image">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="site.css" rel="stylesheet">
+</head>
+<body>
+
+	<header class="nav">
+		<div class="nav-inner">
+			<a href="index.html#top" class="logo">~/Michael Brackin</a>
+			<button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+				<span></span><span></span><span></span>
+			</button>
+			<nav class="nav-links" id="navLinks">
+				<a href="index.html#about">ABOUT</a>
+				<a href="index.html#skills">SKILLS</a>
+				<a href="index.html#projects">PROJECTS</a>
+				<a href="index.html#experience">EXPERIENCE</a>
+				<a href="index.html#education">EDUCATION</a>
+				<a href="index.html#contact">CONTACT</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<a class="back-link" href="projects.html">&larr; Back to all projects</a>
+
+		<p class="eyebrow">PROJECT_04 // Game</p>
+		<h1 class="page-title">Relic RNG</h1>
+		<p class="tagline">A browser idle game: roll for relics with posted odds, dig down through the earth, and beat the boss at the bottom of each layer.</p>
+
+		<div class="tag-list small page-tags">
+			<span>Unity</span><span>HTML5</span><span>Idle Game</span>
+		</div>
+
+		<p class="case-label">GAME_PAGE.TXT</p>
+
+		<div class="embed">
+			<iframe frameborder="0" src="https://itch.io/embed/5383747?border_width=5&amp;dark=true" width="560" height="175" title="Relic RNG on itch.io"><a href="https://awesome-parcore.itch.io/relic-rng">Relic RNG by awesome_parcore</a></iframe>
+		</div>
+
+		<h2><span class="tag">#</span> overview</h2>
+		<p>
+			Every roll pays cash, cash buys upgrades, and upgrades let you dig deeper and roll rarer relics. It runs in the
+			browser, is free to play, and saves your progress automatically. It's an early version, and more layers are on the way.
+		</p>
+
+		<div class="stats">
+			<div class="stat"><span class="num">20</span><span class="label">relics to roll and collect</span></div>
+			<div class="stat"><span class="num">1 in 1B</span><span class="label">odds on the rarest relic</span></div>
+			<div class="stat"><span class="num">2</span><span class="label">layers, each with a minigame and a boss</span></div>
+			<div class="stat"><span class="num">32</span><span class="label">achievements with permanent rewards</span></div>
+		</div>
+
+		<h2><span class="tag">#</span> how it plays</h2>
+		<ul class="bullets">
+			<li><strong>Roll for relics.</strong> Every relic shows its real odds, from 1 in 2 up to 1 in 1 billion. Luck makes rare relics more likely, and you can turn your luck down to farm the common ones. Duplicate copies power up each relic's bonus, and every new discovery gives permanent luck.</li>
+			<li><strong>Dig through the layers.</strong> Dirt (0&ndash;100 m) has a Fossil Dig minigame and the Mole King. Stone (100&ndash;300 m) has a Mining minigame where you time your swings, and the Rock Golem. Each layer has its own relics, fossils, titles and upgrades.</li>
+			<li><strong>Beat the bosses.</strong> Bosses bounce around the arena while you click to hit them, each with its own attack pattern. You dodge the red zones with your cursor before they strike, and every win counts toward permanent milestone rewards.</li>
+			<li><strong>Rebirth and go deeper.</strong> Beating a boss lets you rebirth for a bigger cash boost and the next layer. Rebirth upgrades, fossils, titles and achievements carry over, so each run goes faster than the last.</li>
+		</ul>
+
+		<h2><span class="tag">#</span> features</h2>
+		<ul class="bullets">
+			<li>20 relics, 12 fossils and 28 titles to collect, plus a shiny variant that doubles a relic's bonus once you reach 200 m.</li>
+			<li>Auto-roll and offline progress, so the game keeps earning while you're away.</li>
+			<li>A short tutorial for new players.</li>
+			<li>Played entirely with the mouse (Space also swings in Mining). Progress saves in the browser, so clearing site data resets it.</li>
+		</ul>
+
+		<p class="note-links">
+			<a href="https://awesome-parcore.itch.io/relic-rng" target="_blank" rel="noopener">Play it on itch.io &rarr;</a> Feedback is welcome in the comments there.
+		</p>
+
+		<nav class="page-nav" aria-label="Project navigation">
+			<a href="projects.html">&larr; All projects</a>
+			<a href="index.html#contact">Contact &rarr;</a>
+		</nav>
+
+		<p class="end">END TRANSMISSION</p>
+	</main>
+	<footer class="footer">
+		<p>&copy; <span id="year"></span> Michael Brackin. Built from scratch.</p>
+	</footer>
+
+	<script src="site.js"></script>
+</body>
+</html>
